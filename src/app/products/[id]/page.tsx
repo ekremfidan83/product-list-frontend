@@ -4,7 +4,6 @@ import { useParams, useRouter } from 'next/navigation';
 import { productApi } from '../../../services/api';
 import { Product } from '../../../types/product';
 import Link from 'next/link';
-import Image from 'next/image';
 
 export default function ProductDetail() {
   const params = useParams();
@@ -43,12 +42,10 @@ export default function ProductDetail() {
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="md:flex">
             <div className="md:flex-shrink-0">
-              <Image
-                className="h-96 w-full object-cover md:w-96"
-                src={product.image}
+              <img 
+                src={product.image} 
                 alt={product.name}
-                width={400}
-                height={300}
+                className="w-full max-h-96 object-cover rounded-lg shadow-lg"
               />
             </div>
             <div className="p-8">

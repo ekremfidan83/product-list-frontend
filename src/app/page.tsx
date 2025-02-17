@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { productApi } from '../services/api';
 import { Product } from '../types/product';
 import Link from 'next/link';
-import Image from 'next/image';
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -17,10 +16,8 @@ export default function Home() {
   const loadProducts = async () => {
     try {
       const data = await productApi.getAllProducts();
-      console.log('Backend\'den gelen veri:', data);
       setProducts(data || []);
-    } catch (error) {
-      console.error('Hata:', error);
+    } catch {
       setError('Ürünler yüklenirken bir hata oluştu');
     } finally {
       setLoading(false);
@@ -28,38 +25,45 @@ export default function Home() {
   };
 
   const handleDelete = async (id: number) => {
-    if (window.confirm('Bu ürünü silmek istediğinizden emin misiniz?')) {
-      try {
-        await productApi.deleteProduct(id);
-        setProducts(products.filter(p => p.id !== id));
-      } catch (err) {
-        setError('Ürün silinirken bir hata oluştu');
-      }
+    if (!window.confirm('Bu ürünü silmek istediğinizden emin misiniz?')) {
+      return;
+    }
+
+    try {
+      await productApi.deleteProduct(id);
+      setProducts(prevProducts => prevProducts.filter(p => p.id !== id));
+    } catch {
+      setError('Ürün silinirken bir hata oluştu');
     }
   };
 
-  if (loading) return <div className="text-center p-4">Yükleniyor...</div>;
-  if (error) return <div className="text-center text-red-500 p-4">{error}</div>;
-  if (!products) return <div className="text-center p-4">Ürün bulunamadı</div>;
+  if (loading) {
+    return <div className="text-center p-4">Yükleniyor...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center text-red-500 p-4">{error}</div>;
+  }
 
   return (
     <main className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Ürünlerimiz</h1>
-        <Link href="/add" className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+        <Link 
+          href="/add" 
+          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+        >
           Yeni Ürün Ekle
         </Link>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {products && products.map((product) => (
+        {products.map((product) => (
           <div key={product.id} className="border rounded-lg p-4 shadow-md">
             <Link href={`/products/${product.id}`}>
-              <Image 
+              <img 
                 src={product.image} 
                 alt={product.name}
-                width={400}
-                height={300}
                 className="w-full h-48 object-cover rounded-md"
               />
               <h2 className="text-xl font-semibold mt-2">{product.name}</h2>
