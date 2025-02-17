@@ -4,6 +4,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { productApi } from '../../../services/api';
 import { Product } from '../../../types/product';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function ProductDetail() {
   const params = useParams();
@@ -17,7 +18,8 @@ export default function ProductDetail() {
       try {
         const data = await productApi.getProductById(Number(params.id));
         setProduct(data);
-      } catch (err) {
+      } catch (error) {
+        console.error('Hata:', error);
         setError('Ürün detayı yüklenirken bir hata oluştu');
       } finally {
         setLoading(false);
@@ -41,10 +43,12 @@ export default function ProductDetail() {
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="md:flex">
             <div className="md:flex-shrink-0">
-              <img
+              <Image
                 className="h-96 w-full object-cover md:w-96"
                 src={product.image}
                 alt={product.name}
+                width={400}
+                height={300}
               />
             </div>
             <div className="p-8">

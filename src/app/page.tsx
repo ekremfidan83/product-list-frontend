@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { productApi } from '../services/api';
 import { Product } from '../types/product';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -18,8 +19,8 @@ export default function Home() {
       const data = await productApi.getAllProducts();
       console.log('Backend\'den gelen veri:', data);
       setProducts(data || []);
-    } catch (err) {
-      console.error('Hata:', err);
+    } catch (error) {
+      console.error('Hata:', error);
       setError('Ürünler yüklenirken bir hata oluştu');
     } finally {
       setLoading(false);
@@ -54,9 +55,11 @@ export default function Home() {
         {products && products.map((product) => (
           <div key={product.id} className="border rounded-lg p-4 shadow-md">
             <Link href={`/products/${product.id}`}>
-              <img 
+              <Image 
                 src={product.image} 
                 alt={product.name}
+                width={400}
+                height={300}
                 className="w-full h-48 object-cover rounded-md"
               />
               <h2 className="text-xl font-semibold mt-2">{product.name}</h2>
