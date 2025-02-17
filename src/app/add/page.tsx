@@ -22,6 +22,7 @@ export default function AddProduct() {
       alert('Ürün başarıyla eklendi!');
       router.push('/');
     } catch (error) {
+      console.error('Hata:', error);
       alert('Ürün eklenirken bir hata oluştu');
     }
   };
